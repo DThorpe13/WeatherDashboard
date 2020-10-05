@@ -5,6 +5,8 @@ var apiKey = "&appid=70810bff0060bbafff1f85b8efd41cef";
 
 var date = new Date();
 
+var cityArr = [];
+
 $("#searchTerm").keypress(function(event) { 
 	
 	if (event.keyCode === 13) { 
@@ -13,12 +15,16 @@ $("#searchTerm").keypress(function(event) {
 	} 
 });
 
+
 $("#searchBtn").on("click", function() {
 
   $('#forecastH5').addClass('show');
 
   
   city = $("#searchTerm").val();
+  cityArr.push(city);
+  localStorage.setItem('city', JSON.stringify(cityArr));
+
   
   
   $("#searchTerm").val("");  
@@ -46,12 +52,12 @@ $("#searchBtn").on("click", function() {
 
     getCurrentConditions(response);
     getCurrentForecast(response);
-    makeList();
+    makeList(city);
 
     })
   });
 
-  function makeList() {
+  function makeList(city) {
     var listItem = $("<li>").addClass("list-group-item").text(city);
     $(".list").append(listItem);
   }
@@ -111,10 +117,11 @@ function getCurrentForecast () {
         
         var temp = (results[i].main.temp - 273.15) * 1.80 + 32;
         var tempF = Math.floor(temp);
+        var d = new Date(results[i].dt_txt);
 
         var card = $("<div>").addClass("card col-md-2 ml-4 bg-primary text-white");
         var cardBody = $("<div>").addClass("card-body p-3 forecastBody")
-        var cityDate = $("<h4>").addClass("card-title").text(date.toLocaleDateString('en-US'));
+        var cityDate = $("<h4>").addClass("card-title").text(d.toLocaleDateString('en-US'));
         var temperature = $("<p>").addClass("card-text forecastTemp").text("Temperature: " + tempF + " °F");
         var humidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
 
@@ -130,3 +137,12 @@ function getCurrentForecast () {
 
 }
 
+var storedCities = JSON.parse(localStorage.getItem('city')) || [];
+
+  for(i = 0; i < storedCities.length; i++) {
+    makeList(storedCities[i]);
+    console.log(storedCities[i]);
+  }
+//keeping search bar on page after reload
+//adding ux index to page
+//creating 5 different dates onto page

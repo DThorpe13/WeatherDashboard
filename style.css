@@ -5,3 +5,7 @@
 .show {
     display: block;
 }
+
+body {
+    background-color: lightgray;
+}
